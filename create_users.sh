@@ -1,11 +1,12 @@
 #!/bin/bash
 
 #Log file and password location
-LOGFILE="/var/log/user_management.log"
-PASSWORD_FILE="/var/secure/user_passwords.csv"
+logfile="/var/log/user_management.log"
+password_file="/var/secure/user_passwords.csv"
+text_file=$1
 
 #check for file input
-if [ -z "$1" ]
+if [ -z "$text_file" ]
 then
 echo "Usage is: $0 <name of text file>"
 exit 1
@@ -13,8 +14,8 @@ fi
 
 #Create Log file and password files
 mkdir -p /var/secure
-touch $LOGFILE $PASSWORD_FILE
-chmod 600 $PASSWORD_FILE
+touch $logfile $password_file
+chmod 600 $password_file
 
 #function to generate randompasswords
 generate_random_password() {
@@ -23,7 +24,7 @@ generate_random_password() {
 }
 
 log_message() {
-  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> $LOGFILE
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $text_file" >> $logfile
 }
 
 #FUNCTION TO CREATE USER
@@ -48,7 +49,7 @@ do
   log_message "Group created $group"
   fi
   usermod -aG "$group" "$username"
-  log_message "Added user $username tp group $group"
+  log_message "Added user $username to group $group"
 done
 
 chmod 700 /home/$username
@@ -58,13 +59,13 @@ log_message "Set up home directory for user $username"
 #Assigning Random password to users
 password=$(generate_random_password 12)
 echo "$username:$password" | chpasswd
-echo "$username,$password" >> $PASSWORD_FILE
+echo "$username,$password" >> $password_file
 log_message "Set password for $username"
 }
 
 while IFS=';' read -r username groups;
 do
   create_user "$username" "$groups"
-  done < "$1"
+  done < "$text_file"
 
-echo "User creation done." | tee -a $LOGFILE
+echo "User creation done." | tee -a $logfile
