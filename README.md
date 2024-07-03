@@ -13,7 +13,7 @@ bash create_users.sh <textfile>
 ```
 watch the magic happen.
 
-format the text file in this manner- <username>;<group>,<group>,<group>
+format the text file in this manner -> `<username>;<group>,<group>,<group>`
 put every new user on a new line.
 
 
