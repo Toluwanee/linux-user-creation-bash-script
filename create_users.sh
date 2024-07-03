@@ -44,9 +44,12 @@ fi
 groups_array=($(echo $groups | tr "," "\n"))
 for group in "${groups_array[@]}";
 do
-  if ! getent group "$group" > /dev/null; then
+  if ! getent group "$group" > /dev/null; 
+then
   groupadd "$group"
   log_message "Group created $group"
+  else
+  log_message "Group $group already exists"
   fi
   usermod -aG "$group" "$username"
   log_message "Added user $username to group $group"
